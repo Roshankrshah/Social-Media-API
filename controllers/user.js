@@ -40,4 +40,14 @@ const deleteUser = async (req,res)=>{
     }
 };
 
-module.exports = {update, deleteUser};
+const getUser = async (req,res)=>{
+    try{
+        const user = await User.findById(req.params.id);
+        const {password,updatedAt, ...other} = user._doc;
+        res.status(StatusCodes.OK).json(other);
+    }catch(err){
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
+    }
+}
+
+module.exports = {update, deleteUser, getUser};
