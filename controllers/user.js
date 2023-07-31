@@ -27,4 +27,17 @@ const update = async (req,res)=>{
     }
 }
 
-module.exports = {update};
+const deleteUser = async (req,res)=>{
+    if (req.body.userId === req.params.id || req.body.isAdmin) {
+        try{
+            await User.findByIdAndDelete(req.params.id);
+            res.status(StatusCodes.OK).json('Account has been deleted');
+        }catch(err){
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
+        }
+    }else{
+        res.status(StatusCodes.FORBIDDEN).json('You can delete only your account!');
+    }
+};
+
+module.exports = {update, deleteUser};
