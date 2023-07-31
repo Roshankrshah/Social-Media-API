@@ -6,7 +6,6 @@ const { STATUS_CODES } = require('http');
 const register = async (req,res)=>{
 
     const {password, username,email} = req.body;
-
     try{
         const salt = await bcrypt.genSalt(10);
         const hashPassword = await bcrypt.hash(password,salt);
@@ -26,6 +25,7 @@ const register = async (req,res)=>{
 
 const login = async (req,res)=>{
     const {email,password} = req.body;
+    
     try{
         const user = await User.findOne({email});
         if(!user){
