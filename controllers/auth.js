@@ -41,5 +41,4 @@ const login = async (req,res)=>{
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
     }
 }
-
 module.exports = {register,login};
