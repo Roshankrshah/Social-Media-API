@@ -1,7 +1,6 @@
 const User = require('../models/user');
 const {StatusCodes} = require('http-status-codes');
 const bcrypt = require('bcrypt');
-const { STATUS_CODES } = require('http');
 
 const register = async (req,res)=>{
 
@@ -39,7 +38,7 @@ const login = async (req,res)=>{
 
         res.status(StatusCodes.OK).json(user);
     }catch(error){
-        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
     }
 }
 
