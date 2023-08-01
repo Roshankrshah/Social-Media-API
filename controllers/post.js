@@ -26,5 +26,28 @@ const updatePost = async (req,res)=>{
     }
 };
 
-module.exports = {createPost, updatePost};
+const deletePost = async (req,res)=>{
+    try{
+        const post = await Post.findById(req.params.id);
+        if(post.userId === req.body.userId){
+            await post.deleteOne();
+            res.status(StatusCodes.OK).json('The post has been deleted');
+        }else{
+            res.status(StatusCodes.FORBIDDEN).json('You can only delete your post');
+        }
+    }catch(err){
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
+    }
+};
+
+const getPost = async (req,res)=>{
+    try{
+        const post = await Post.findById(req.params.id);
+        res.status(StatusCodes.OK).json(post);
+    }catch(err){
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
+    }
+};
+
+module.exports = {createPost, updatePost, deletePost, getPost};
 
