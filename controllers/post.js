@@ -1,68 +1,84 @@
 const Post = require('../models/post');
+const User = require('../models/user');
 const { StatusCodes } = require('http-status-codes');
 const bcrypt = require('bcrypt');
 
-const createPost = async (req,res)=>{
+const createPost = async (req, res) => {
     const newPost = new Post(req.body);
-    try{
+    try {
         const savedPost = await newPost.save();
         res.status(StatusCodes.OK).json(savedPost);
-    }catch(err){
+    } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
     }
 };
 
-const updatePost = async (req,res)=>{
-    try{
+const updatePost = async (req, res) => {
+    try {
         const post = await Post.findById(req.params.id);
-        if(post.userId === req.body.userId){
-            await post.updateOne({$set:req.body});
+        if (post.userId === req.body.userId) {
+            await post.updateOne({ $set: req.body });
             res.status(StatusCodes.OK).json('The post has been updated');
-        }else{
+        } else {
             res.status(StatusCodes.FORBIDDEN).json('you can update only your posts');
         }
-    }catch(err){
+    } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
     }
 };
 
-const deletePost = async (req,res)=>{
-    try{
+const deletePost = async (req, res) => {
+    try {
         const post = await Post.findById(req.params.id);
-        if(post.userId === req.body.userId){
+        if (post.userId === req.body.userId) {
             await post.deleteOne();
             res.status(StatusCodes.OK).json('The post has been deleted');
-        }else{
+        } else {
             res.status(StatusCodes.FORBIDDEN).json('You can only delete your post');
         }
-    }catch(err){
+    } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
     }
 };
 
-const getPost = async (req,res)=>{
-    try{
+const getPost = async (req, res) => {
+    try {
         const post = await Post.findById(req.params.id);
         res.status(StatusCodes.OK).json(post);
-    }catch(err){
+    } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
     }
 };
 
-const reactOnPost = async (req,res)=>{
-    try{
+const reactOnPost = async (req, res) => {
+    try {
         const post = await Post.findById(req.params.id);
-        if(!post.likes.includes(req.body.userId)){
-            await post.updateOne({$push: {likes: req.body.userId}});
+        if (!post.likes.includes(req.body.userId)) {
+            await post.updateOne({ $push: { likes: req.body.userId } });
             res.status(StatusCodes.OK).json("The post has been liked");
-        }else{
-            await post.updateOne({$pull:{likes: req.body.userId}});
+        } else {
+            await post.updateOne({ $pull: { likes: req.body.userId } });
             res.status(StatusCodes.OK).json("The post has been disliked");
         }
-    }catch(err){
+    } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
     }
 }
 
-module.exports = {createPost, updatePost, deletePost, getPost, reactOnPost};
+const timelinePost = async (req, res) => {
+    try {
+        const currentUser = await User.findById(req.body.userId);
+        const userPosts = await Post.find({ userId: currentUser._id });
+        const friendPosts = await Promise.all(
+            currentUser.followings.map((friendId) => {
+                return Post.find({ userId: friendId });
+            })
+        );
+        res.json(userPosts.concat(...friendPosts));
+    } catch (err) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
+    }
+};
+
+module.exports = { createPost, updatePost, deletePost, getPost, reactOnPost, timelinePost };
 
