@@ -49,5 +49,20 @@ const getPost = async (req,res)=>{
     }
 };
 
-module.exports = {createPost, updatePost, deletePost, getPost};
+const reactOnPost = async (req,res)=>{
+    try{
+        const post = await Post.findById(req.params.id);
+        if(!post.likes.includes(req.body.userId)){
+            await post.updateOne({$push: {likes: req.body.userId}});
+            res.status(StatusCodes.OK).json("The post has been liked");
+        }else{
+            await post.updateOne({$pull:{likes: req.body.userId}});
+            res.status(StatusCodes.OK).json("The post has been disliked");
+        }
+    }catch(err){
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
+    }
+}
+
+module.exports = {createPost, updatePost, deletePost, getPost, reactOnPost};
 
