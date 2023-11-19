@@ -8,6 +8,9 @@ const app = express();
 const notFound = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
 
+const {swaggerServe,swaggerSetup} = require('./config');
+
+app.use('/api-docs',swaggerServe,swaggerSetup);
 app.use(express.json());
 app.use(morgan('common'));
 
