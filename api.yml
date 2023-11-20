@@ -83,3 +83,89 @@ paths:
           description: Unauthenticated Error, Invalid Credentials
         '500':
           description: Internal Server Error 
+  
+  /user/{userId}:
+    get:
+      summary: Get user by id of user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: id of user
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+              email:
+                type: string
+                format: email
+              profilePicture:
+                type: string
+              coverPicture:
+                type: string
+              followers:
+                type: array
+                items:  
+                  type: string
+              followings:
+                type: array
+                items:  
+                  type: string
+              isAdmin:
+                type: boolean
+              desc:
+                type: string
+                maxLength: 50
+              city:
+                type: string
+                maxLength: 50
+              from:
+                type: string
+                maxLength: 50
+              relationship:
+                type: integer
+                enum: [1,2,3]
+        '404': 
+          description: Not Found. No job found with given jobId.
+        '500':
+          description: Internal Server Error
+
+    put:
+      summary: Update the user's details
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: id of user
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId: 
+                  type: string
+                desc:
+                  type: string
+                  maxLength: 50
+              required:
+                - userId
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Authorization Error. User can update only their account.
+        '404': 
+          description: Not Found. No job found with given jobId.
+        '500':
+          description: Internal Server Error
+      
