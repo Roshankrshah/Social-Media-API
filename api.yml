@@ -168,4 +168,85 @@ paths:
           description: Not Found. No job found with given jobId.
         '500':
           description: Internal Server Error
+    
+    delete:
+      summary: Delete the user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: id of user
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Authorization Error. User can update only their account.
+        '404': 
+          description: Not Found. No job found with given jobId.
+        '500':
+          description: Internal Server Error
+
+  /user/{userId}/follow:
+    put:
+      summary: Follow the other user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: id of user to be followed
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+              required:
+                - userId
+      responses:
+        '200':
+          description: OK
+        '403':
+          description: Forbidden.
+        '500':
+          description: Internal Server Error
+  
+  /user/{userId}/unfollow:
+    put:
+      summary: UnFollow the other user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: id of user to be unfollowed
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+              required:
+                - userId
+      responses:
+        '200':
+          description: OK
+        '403':
+          description: Forbidden Error. You cannot unFollow yourself
+        '500':
+          description: Internal Server Error
+  
+          
+
+
       
